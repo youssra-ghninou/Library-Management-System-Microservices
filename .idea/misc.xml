@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/DiscoveryServer/pom.xml" />
+        <option value="$PROJECT_DIR$/pret_livres/pom.xml" />
+        <option value="$PROJECT_DIR$/e-book/pom.xml" />
+        <option value="$PROJECT_DIR$/apiGateway/pom.xml" />
+        <option value="$PROJECT_DIR$/DiscoveryServer/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/api-gateway/api-gateway/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/api-gateway/api-gateway/pom.xml" />
+        <option value="$PROJECT_DIR$/apiGateway/pom.xml" />
+      </set>
+    </option>
+    <option name="workspaceImportForciblyTurnedOn" value="true" />
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="openjdk-21" project-jdk-type="JavaSDK" />
+</project>
