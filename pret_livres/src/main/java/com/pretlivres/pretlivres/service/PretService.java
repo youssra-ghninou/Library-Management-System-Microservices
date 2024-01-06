@@ -20,7 +20,7 @@ import java.util.UUID;
 @Transactional
 public class PretService {
     private final PretRepository pretRepository;
-    private final WebClient webClient;
+    private final WebClient.Builder webClientBuilder;
     public List<Pret> findAll() {
         return pretRepository.findAll();
     }
@@ -39,8 +39,8 @@ public class PretService {
                 .toList();
 
         //call Stock Service, and place pret if book is in stock
-        StockResponse[] stockResponseArray =  webClient.get()
-                .uri("http://localhost:8082/api/v1/recherche-stock",
+        StockResponse[] stockResponseArray =  webClientBuilder.build().get()
+                .uri("http://rechercheStock/api/v1/recherche-stock",
                         uriBuilder -> uriBuilder.queryParam("skuCode",skuCodes).build())
                         .retrieve()
                                 .bodyToMono(StockResponse[].class)
