@@ -2,13 +2,16 @@ package com.pretlivres.pretlivres.service;
 
 import com.pretlivres.pretlivres.dto.PretLineItemsDto;
 import com.pretlivres.pretlivres.dto.PretRequest;
+import com.pretlivres.pretlivres.dto.StockResponse;
 import com.pretlivres.pretlivres.model.Pret;
 import com.pretlivres.pretlivres.model.PretLineItems;
 import com.pretlivres.pretlivres.repository.PretRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,6 +20,7 @@ import java.util.UUID;
 @Transactional
 public class PretService {
     private final PretRepository pretRepository;
+    private final WebClient webClient;
     public List<Pret> findAll() {
         return pretRepository.findAll();
     }
@@ -29,7 +33,27 @@ public class PretService {
                 .toList();
 
         pret.setPretLineItemsList(preLineItems);
-        pretRepository.save(pret);
+
+        List<String> skuCodes = pret.getPretLineItemsList().stream()
+                .map(PretLineItems::getSkuCode)
+                .toList();
+
+        //call Stock Service, and place pret if book is in stock
+        StockResponse[] stockResponseArray =  webClient.get()
+                .uri("http://localhost:8082/api/v1/recherche-stock",
+                        uriBuilder -> uriBuilder.queryParam("skuCode",skuCodes).build())
+                        .retrieve()
+                                .bodyToMono(StockResponse[].class)
+                                        .block();
+
+
+        boolean allBooksInStock =  Arrays.stream(stockResponseArray).allMatch(StockResponse::isInStock);
+
+        if (allBooksInStock){
+            pretRepository.save(pret);
+        }else {
+            throw new IllegalArgumentException("Le livre n'est pas dans le stock");
+        }
     }
 
     private PretLineItems mapToDo(PretLineItemsDto pretLineItemsDto) {

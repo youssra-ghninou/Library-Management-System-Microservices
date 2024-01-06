@@ -1,19 +1,25 @@
 package com.recherchestock.recherchestock.controller;
 
+import com.recherchestock.recherchestock.dto.StockResponse;
 import com.recherchestock.recherchestock.service.StockService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/v1/stock")
+@RequestMapping("/api/v1/recherche-stock")
 @RequiredArgsConstructor
+@Slf4j
 public class StockController {
 
     private final StockService stockService;
-    @GetMapping("/{sku-code}")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public boolean isInStock(@PathVariable("sku-code") String skuCode){
-    return stockService.isInStock(skuCode);
+    public List<StockResponse> isInStock(@RequestParam List<String> skuCode){
+        log.info("Received inventory check request for skuCode: {}", skuCode);
+        return stockService.isInStock(skuCode);
     }
 }
