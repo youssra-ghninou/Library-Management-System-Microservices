@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -34,7 +35,20 @@ public class BookService {
 
 	@Transactional(readOnly = true)
 	public List<StockResponse> isInStock(List<String> skuCode){
-		return bookRepository.findBySkuCodeIn(skuCode).stream()
+		List<Book> books = bookRepository.findBySkuCodeIn(skuCode);
+
+		// Check if the number of books found matches the number of SKU codes provided
+		if (books.size() != skuCode.size()) {
+			// Find which skuCodes were not found
+			List<String> foundSkuCodes = books.stream().map(Book::getSkuCode).toList();
+			String notFoundSkuCodes = skuCode.stream()
+					.filter(skuCodeSingle -> !foundSkuCodes.contains(skuCode))
+					.collect(Collectors.joining(", "));
+
+			throw new IllegalArgumentException("Invalid skuCode(s) provided: " + notFoundSkuCodes);
+		}
+
+		return books.stream()
 				.map(stock ->
 						StockResponse.builder()
 								.skuCode(stock.getSkuCode())
