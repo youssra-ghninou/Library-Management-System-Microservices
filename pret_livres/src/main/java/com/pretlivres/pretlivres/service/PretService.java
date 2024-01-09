@@ -8,6 +8,7 @@ import com.pretlivres.pretlivres.model.PretLineItems;
 import com.pretlivres.pretlivres.repository.PretRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -60,13 +61,6 @@ public class PretService {
 
         if (allBooksInStock){
             pretRepository.save(pret);
-            StockResponse[] stockUpdate =  webClientBuilder.build().put()
-                    .uri("http://bookStore/api/v1/books/update/",
-                            uriBuilder -> uriBuilder.queryParam("id",skuCodes).build())
-                    .header(HttpHeaders.AUTHORIZATION, token)
-                    .retrieve()
-                    .bodyToMono(StockResponse[].class)
-                    .block();
         }else {
             throw new IllegalArgumentException("Le livre n'est pas dans le stock");
         }

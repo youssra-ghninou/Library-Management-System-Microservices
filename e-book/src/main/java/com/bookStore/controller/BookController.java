@@ -52,7 +52,7 @@ public class BookController {
 				})
 				.orElse(ResponseEntity.notFound().build());
 	}
-	@PutMapping("/update/quantite/")
+	@GetMapping("/update/quantite/")
 	public ResponseEntity<Book> updateBookQuantity(@RequestParam Integer id, @RequestParam Integer quantite) {
 		return bookService.findById(id)
 				.map(book -> {
