@@ -20,8 +20,9 @@ public class PretController {
     }
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.CREATED)
-    public String placePret(@RequestBody PretRequest pretRequest){
-        pretService.placePret(pretRequest);
+    public String placePret(@RequestBody PretRequest pretRequest,
+                            @RequestHeader("Authorization") String token){
+        pretService.placePret(pretRequest, token);
         return "Prêt créé avec succès";
     }
 }

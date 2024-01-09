@@ -1,8 +1,10 @@
 package com.bookStore.controller;
 
+import com.bookStore.dto.StockResponse;
 import com.bookStore.entity.Book;
 import com.bookStore.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +29,12 @@ public class BookController {
 				.orElse(ResponseEntity.notFound().build());
 	}
 
+	@GetMapping("/recherche-stock")
+	@ResponseStatus(HttpStatus.OK)
+	public List<StockResponse> isInStock(@RequestParam List<String> skuCode){
+		return bookService.isInStock(skuCode);
+	}
+
 	@PostMapping("/add")
 	public Book createBook(@RequestBody Book book) {
 		return bookService.save(book);
@@ -36,9 +44,9 @@ public class BookController {
 	public ResponseEntity<Book> updateBook(@PathVariable Integer id, @RequestBody Book bookDetails) {
 		return bookService.findById(id)
 				.map(book -> {
-					book.setName(bookDetails.getName());
-					book.setAuthor(bookDetails.getAuthor());
-					book.setPrice(bookDetails.getPrice());
+					book.setTitre(bookDetails.getTitre());
+					book.setAuteur(bookDetails.getAuteur());
+					book.setPrix(bookDetails.getPrix());
 					return ResponseEntity.ok(bookService.save(book));
 				})
 				.orElse(ResponseEntity.notFound().build());

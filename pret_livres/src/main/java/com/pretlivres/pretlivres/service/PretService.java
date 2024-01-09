@@ -7,6 +7,7 @@ import com.pretlivres.pretlivres.model.Pret;
 import com.pretlivres.pretlivres.model.PretLineItems;
 import com.pretlivres.pretlivres.repository.PretRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,7 +25,7 @@ public class PretService {
     public List<Pret> findAll() {
         return pretRepository.findAll();
     }
-    public void placePret(PretRequest pretRequest){
+    public void placePret(PretRequest pretRequest, String token){
         Pret pret = new Pret();
         pret.setNumeroPret(UUID.randomUUID().toString());
         List<PretLineItems> preLineItems = pretRequest.getPretLineItemsDtoList()
@@ -40,8 +41,9 @@ public class PretService {
 
         //call Stock Service, and place pret if book is in stock
         StockResponse[] stockResponseArray =  webClientBuilder.build().get()
-                .uri("http://rechercheStock/api/v1/recherche-stock",
+                .uri("http://bookStore/api/v1/books/recherche-stock",
                         uriBuilder -> uriBuilder.queryParam("skuCode",skuCodes).build())
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .retrieve()
                                 .bodyToMono(StockResponse[].class)
                                         .block();
