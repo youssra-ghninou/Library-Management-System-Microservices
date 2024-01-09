@@ -60,6 +60,13 @@ public class PretService {
 
         if (allBooksInStock){
             pretRepository.save(pret);
+            StockResponse[] stockUpdate =  webClientBuilder.build().put()
+                    .uri("http://bookStore/api/v1/books/update/",
+                            uriBuilder -> uriBuilder.queryParam("id",skuCodes).build())
+                    .header(HttpHeaders.AUTHORIZATION, token)
+                    .retrieve()
+                    .bodyToMono(StockResponse[].class)
+                    .block();
         }else {
             throw new IllegalArgumentException("Le livre n'est pas dans le stock");
         }

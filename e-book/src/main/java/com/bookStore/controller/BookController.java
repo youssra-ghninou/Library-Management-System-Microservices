@@ -47,11 +47,20 @@ public class BookController {
 					book.setTitre(bookDetails.getTitre());
 					book.setAuteur(bookDetails.getAuteur());
 					book.setPrix(bookDetails.getPrix());
+					book.setQuantite(bookDetails.getQuantite());
 					return ResponseEntity.ok(bookService.save(book));
 				})
 				.orElse(ResponseEntity.notFound().build());
 	}
-
+	@PutMapping("/update/quantite/")
+	public ResponseEntity<Book> updateBookQuantity(@RequestParam Integer id, @RequestParam Integer quantite) {
+		return bookService.findById(id)
+				.map(book -> {
+					book.setQuantite(quantite);
+					return ResponseEntity.ok(bookService.save(book));
+				})
+				.orElse(ResponseEntity.notFound().build());
+	}
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteBook(@PathVariable Integer id) {
 		if (bookService.findById(id).isPresent()) {

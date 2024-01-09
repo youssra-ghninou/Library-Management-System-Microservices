@@ -52,6 +52,8 @@ public class BookService {
 				.map(stock ->
 						StockResponse.builder()
 								.skuCode(stock.getSkuCode())
+								.Id(stock.getId())
+								.quantite(stock.getQuantite())
 								.isInStock(stock.getQuantite() > 0)
 								.build()
 				).toList();

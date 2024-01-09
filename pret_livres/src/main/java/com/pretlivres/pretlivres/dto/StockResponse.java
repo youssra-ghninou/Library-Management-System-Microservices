@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class StockResponse {
+    private Integer Id;
     private String skuCode;
+    private Integer quantite;
     private boolean isInStock;
 }
