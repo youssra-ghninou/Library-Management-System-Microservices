@@ -14,6 +14,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,6 +25,12 @@ public class PretService {
     private final WebClient.Builder webClientBuilder;
     public List<Pret> findAll() {
         return pretRepository.findAll();
+    }
+    public Optional<Pret> findById(Long id) {
+        return pretRepository.findById(id);
+    }
+    public void deleteById(Long id) {
+        pretRepository.deleteById(id);
     }
     public void placePret(PretRequest pretRequest, String token){
         Pret pret = new Pret();

@@ -5,6 +5,7 @@ import com.pretlivres.pretlivres.model.Pret;
 import com.pretlivres.pretlivres.service.PretService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +25,14 @@ public class PretController {
                             @RequestHeader("Authorization") String token){
         pretService.placePret(pretRequest, token);
         return "Prêt créé avec succès";
+    }
+
+    @DeleteMapping("/delete/{numeroPret}")
+    public ResponseEntity<?> deletePret(@PathVariable Long numeroPret) {
+        if (pretService.findById(numeroPret).isPresent()) {
+            pretService.deleteById(numeroPret);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
