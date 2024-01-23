@@ -1,0 +1,99 @@
+version: '3.8'
+
+services:
+  discovery:
+    image: discovery-image
+    ports:
+      - "8761:8761"
+    environment:
+      - spring_application_name=DiscoveryServer
+      - eureka_client_serviceUrl_defaultZone=http://discovery:8761/eureka
+    networks:
+      - microservice-network
+
+  apigateway:
+    image: apigateway-image
+    ports:
+      - "1002:1002"
+    environment:
+      - spring_application_name=api-gateway
+      - eureka_client_serviceUrl_defaultZone=http://discovery:8761/eureka
+    networks:
+      - microservice-network
+    depends_on:
+      - discovery
+
+  livre:
+    image: livre-image
+    environment:
+      - spring_application_name=bookStore
+      - eureka_client_serviceUrl_defaultZone=http://discovery:8761/eureka
+      - spring_datasource_url=jdbc:mysql://db:3306/book
+      - spring_datasource_username=root
+      - spring_datasource_password=12345678910
+    networks:
+      - microservice-network
+    depends_on:
+      - discovery
+      - db
+
+  pret:
+    image: pret-image
+    environment:
+      - spring_application_name=pretLivre
+      - eureka_client_serviceUrl_defaultZone=http://discovery:8761/eureka
+      - spring_datasource_url=jdbc:postgresql://db-pret:5432/PretLivres
+      - spring_datasource_username=root
+      - spring_datasource_password=root
+    networks:
+      - microservice-network
+    depends_on:
+      - discovery
+      - db-pret
+
+  db:
+    container_name: book-service-db
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678910
+      MYSQL_DATABASE: book
+    ports:
+      - "3306:3306"
+    networks:
+      - microservice-network
+
+  db-pret:
+    container_name: pret-livres-db
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: PretLivres
+    ports:
+      - '5432:5432'
+    networks:
+      - microservice-network
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - microservice-network
+
+  keycloak:
+    image: jboss/keycloak
+    ports:
+      - "8181:8080"
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+    networks:
+      - microservice-network
+
+networks:
+  microservice-network:
+    driver: bridge
